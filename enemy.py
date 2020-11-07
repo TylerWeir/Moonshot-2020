@@ -2,7 +2,7 @@ import pygame
 import random
 
 # Create a surface that will represent the enemy
-enemySurf = pygame.Surface((20, 10))
+enemySurf = pygame.Surface((50, 10))
 enemySurf.fill((255, 255, 255))
 
 # set a color key for blitting
@@ -20,14 +20,13 @@ class Enemy(pygame.sprite.Sprite):
         # initialize the super sprite class
         super(Enemy, self).__init__()
         self.surf = enemySurf
-        self.rect = self.surf.get_rect(center=(random.randint(820, 900),
-                                               random.randint(0, 600)))
-        self.speed = random.randint(1, 5)
+        self.rect = self.surf.get_rect(center=(400, 400))
+        self.velocity = (random.randint(-5, 5), random.randint(-5, 5))
         self.angle = 0
 
     def update(self):
         # move to the left at characteristic speed
-        self.rect.move_ip(-self.speed, 0)
+        self.rect.move_ip(self.velocity)
         if self.rect.right < 0:
             self.kill()
         self.rotate()
