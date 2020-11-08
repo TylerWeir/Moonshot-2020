@@ -32,7 +32,7 @@ all_sprites.add(player)
 
 # Add a new eney every 250 miliseconds
 ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 250)
+pygame.time.set_timer(ADDENEMY, 100)
 
 # Setup the clock to limit framerate
 clock = pygame.time.Clock()
