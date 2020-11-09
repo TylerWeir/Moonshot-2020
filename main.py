@@ -53,7 +53,7 @@ while running:
             # Quit if the escape key is pressed.
             if event.key == K_ESCAPE:
                 running = False
-        elif event.type == ADDENEMY:
+        elif event.type == ADDENEMY and len(enemies) < 100:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
