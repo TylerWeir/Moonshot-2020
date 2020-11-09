@@ -61,9 +61,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.normalize_vector(self.velocity), self.max_velocity)
 
         # Rotate to align with the new velocity
-        if(acceleration[0] != 0 or acceleration[1] != 0):
-            theta = self.calc_rotation(self.velocity)
-            self.rotate(theta)
+        theta = self.calc_rotation(self.velocity)
+        self.rotate(theta)
 
     def rotate(self, angle):
         # save the old center postion
@@ -77,8 +76,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
         self.rect.center = oldCenter
 
-    def calc_rotation(self, v2):
-        newtheta = math.atan2(v2[1], v2[0])
+    def calc_rotation(self, v):
+        newtheta = math.atan2(v[1], v[0])
         return 180-math.degrees(newtheta)
 
     def normalize_vector(self, vector):

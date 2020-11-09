@@ -30,8 +30,7 @@ class Pilot():
                            separations[1] + separation[1])
 
         magnitude = magnitude/len(boids)
-        magnitude = magnitude/5
-        return self.scale_vector(self.normalize_vector(separations), 50/(magnitude**2))
+        return self.scale_vector(self.normalize_vector(separations), magnitude)
 
     def calc_align_acceleration(self, boids):
         """Returns the acceleration vector to align velocity direction with the
@@ -46,7 +45,7 @@ class Pilot():
             unitVelocity = self.normalize_vector(boid.velocity)
             velocityAccumulator = (velocityAccumulator[0] + unitVelocity[0],
                                    velocityAccumulator[1] + unitVelocity[1])
-        return(self.scale_vector(velocityAccumulator, 1/len(boids)))
+        return(self.scale_vector(velocityAccumulator, 1))
 
     def calc_approach_acceleration(self, boids, position):
         """Returns the approach accerlation"""
@@ -94,7 +93,7 @@ class Pilot():
         # Return final condensed acceleration
         totalAccel = (approachAcceleration[0] + alignAcceleration[0] + avoidAcceleration[0],
                       approachAcceleration[1] + alignAcceleration[1] + avoidAcceleration[1])
-        totalAccel = self.scale_vector(self.normalize_vector(totalAccel), 0.1)
+        totalAccel = self.scale_vector(self.normalize_vector(totalAccel), 0.075)
         return totalAccel
 
     def find_nearby_boids(self, boids, position, distance):
