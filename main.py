@@ -32,7 +32,7 @@ all_sprites.add(player)
 
 # Add a new eney every 250 miliseconds
 ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 100)
+pygame.time.set_timer(ADDENEMY, 200)
 
 # Setup the clock to limit framerate
 clock = pygame.time.Clock()
@@ -63,7 +63,7 @@ while running:
     # Moves the player when keys are pressed
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
-    enemies.update()
+    enemies.update(enemies)
 
     # Draws all sprites to the screen
     for entity in all_sprites:
