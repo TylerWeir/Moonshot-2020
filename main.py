@@ -1,15 +1,18 @@
 """This program is my submission to the 2020 Game Off hosted by itch.io"""
 from player import Player
 from enemy import Enemy
+from bullet import Bullet
 
 # Imports the pygame module
 import pygame
 from pygame.locals import (
     K_ESCAPE,
+    K_SPACE,
     KEYDOWN,
     QUIT
 )
 
+# TODO: Make a vector class!!!!
 
 # Initializes the pygame modules
 pygame.init()
@@ -27,6 +30,7 @@ background.fill((0, 0, 0))
 # Makes groups of sprites that have built in methods such as collision
 # detection
 enemies = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
@@ -53,6 +57,10 @@ while running:
             # Quit if the escape key is pressed.
             if event.key == K_ESCAPE:
                 running = False
+            if event.key == K_SPACE:
+                new_bullet = Bullet(player.velocity, player.rect.center)
+                bullets.add(new_bullet)
+                all_sprites.add(new_bullet)
         elif event.type == ADDENEMY and len(enemies) < 10:
             new_enemy = Enemy()
             enemies.add(new_enemy)
@@ -64,6 +72,7 @@ while running:
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
     enemies.update(enemies)
+    bullets.update()
 
     # Draws all sprites to the screen
     for entity in all_sprites:
@@ -71,7 +80,17 @@ while running:
 
     # Kill the player if he collides with an enemy
     if pygame.sprite.spritecollideany(player, enemies):
+        # Make a new player when the old one dies
         player.kill()
+        player = Player()
+        all_sprites.add(player)
+
+    # Kill the enemy and the bullet if he collides with an enemy
+    for bullet in bullets:
+        for enemy in enemies:
+            if pygame.sprite.collide_rect(bullet, enemy):
+                bullet.kill()
+                enemy.kill()
 
     # Update the display to see new drawings
     pygame.display.flip()

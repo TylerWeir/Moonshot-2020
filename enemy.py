@@ -61,6 +61,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.normalize_vector(self.velocity), self.max_velocity)
 
         # Rotate to align with the new velocity
+        # Maybe normalize first? I couldn't see much improvement
         theta = self.calc_rotation(self.velocity)
         self.rotate(theta)
 
