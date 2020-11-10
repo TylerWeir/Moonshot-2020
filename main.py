@@ -1,9 +1,20 @@
-"""This program is my submission to the 2020 Game Off hosted by itch.io"""
+# Moonshot is a 2D space age dogfighting game. The player is tasked with
+# defending his moon base for as long as he can survive. The enemy ships come
+# in waves. Each wave contains squadrons of enemies that swoop upon the player
+# and attempt to destroy him with projectiles.
+#
+# Created by: Tyler Weir
+# Date: 11/9/2020
+#
+# TODO: Make vector class, add proper ordering of acceleration to pilot class
+#
+
+# Local imports
 from player import Player
 from enemy import Enemy
 from bullet import Bullet
 
-# Imports the pygame module
+# External imports
 import pygame
 from pygame.locals import (
     K_ESCAPE,
@@ -12,20 +23,16 @@ from pygame.locals import (
     QUIT
 )
 
-# TODO: Make a vector class!!!!
-
 # Initializes the pygame modules
 pygame.init()
 
 # Create the screen object
-# Make the screen fullscreen mode
 screen = pygame.display.set_mode((800, 800))
-
-# instantitate our player; reight now he's just a rectangle
-player = Player()
-
 background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
+
+# Instantiate the player
+player = Player()
 
 # Makes groups of sprites that have built in methods such as collision
 # detection
@@ -34,7 +41,7 @@ bullets = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
-# Add a new eney every 250 miliseconds
+# Add a new eney every 250 miliseconds with custom event detection and timer
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 200)
 
@@ -46,7 +53,6 @@ running = True
 
 # Game loop!
 while running:
-
     # Loops through the event queue.
     for event in pygame.event.get():
         # Quit if the user clicks the quit button.
@@ -57,18 +63,21 @@ while running:
             # Quit if the escape key is pressed.
             if event.key == K_ESCAPE:
                 running = False
+            # Fire a bullet from the player if space is pressed
             if event.key == K_SPACE:
                 new_bullet = Bullet(player.velocity, player.rect.center)
                 bullets.add(new_bullet)
                 all_sprites.add(new_bullet)
+        # Custom event detection to add enemy
         elif event.type == ADDENEMY and len(enemies) < 10:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
+    # Paint the background
     screen.blit(background, (0, 0))
 
-    # Moves the player when keys are pressed
+    # Updates entities in these groups, providing necessary information
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
     enemies.update(enemies)
@@ -85,7 +94,7 @@ while running:
         player = Player()
         all_sprites.add(player)
 
-    # Kill the enemy and the bullet if he collides with an enemy
+    # Kill the enemy and the bullet if the bullet collides with an enemy
     for bullet in bullets:
         for enemy in enemies:
             if pygame.sprite.collide_rect(bullet, enemy):
@@ -94,10 +103,9 @@ while running:
 
     # Update the display to see new drawings
     pygame.display.flip()
-    # print("Screen flipped")
 
     # Ensure program maintains a rate of 30 frames per second
     clock.tick(60)
 
-# Done! Time to quit.
+# Quits the program when the game loop ends.
 pygame.quit()
