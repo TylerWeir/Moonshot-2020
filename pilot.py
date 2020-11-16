@@ -1,6 +1,7 @@
 # This module will represent the pilot controlling a ship using Craig Reynold's
 # flocking algorithim
 import math
+from vector2d import Vector2D
 
 
 class Pilot():
@@ -42,7 +43,7 @@ class Pilot():
         # Add up all the normalized velocity vectors and devide by n
         velocityAccumulator = (0, 0)
         for boid in boids:
-            unitVelocity = self.normalize_vector(boid.velocity)
+            unitVelocity = self.normalize_vector(boid.velocity.to_tuple())
             velocityAccumulator = (velocityAccumulator[0] + unitVelocity[0],
                                    velocityAccumulator[1] + unitVelocity[1])
         return(self.scale_vector(velocityAccumulator, 1))
@@ -93,8 +94,8 @@ class Pilot():
         # Return final condensed acceleration
         totalAccel = (approachAcceleration[0] + alignAcceleration[0] + avoidAcceleration[0],
                       approachAcceleration[1] + alignAcceleration[1] + avoidAcceleration[1])
-        totalAccel = self.scale_vector(self.normalize_vector(totalAccel), 0.075)
-        return totalAccel
+        totalAccel = self.scale_vector(self.normalize_vector(totalAccel), 0.1)
+        return Vector2D(totalAccel[0], totalAccel[1])
 
     def find_nearby_boids(self, boids, position, distance):
         """Finds all the boids in a given list within the given distance of the

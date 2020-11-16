@@ -12,18 +12,17 @@ class Vector2D():
         self.x = x
         self.y = y
 
-    def calc_rotation(self):
+    def calc_angle(self):
         """Returns the angle between (0,0) and vector in degrees."""
         newtheta = math.atan2(self.y, self.x)
-        return math.degrees(newtheta)
+        return 180 - math.degrees(newtheta)
 
     def normalize_vector(self):
         """Normalizes the vector to magnitude zero."""
         magnitude = self.get_magnitude()
-        if magnitude == 0:
-            return self
-        else:
-            return(self.x/magnitude, self.y/magnitude)
+        if magnitude != 0:
+            self.x = self.x/magnitude
+            self.y = self.y/magnitude
 
     def scale_vector(self, scale):
         """Scales the vector by the given quantity."""
@@ -33,3 +32,12 @@ class Vector2D():
     def get_magnitude(self):
         """Returns the magnitude of the vector."""
         return math.sqrt(self.x**2 + self.y**2)
+
+    def to_tuple(self):
+        """Returns the vector as a tuple."""
+        return (self.x, self.y)
+
+    def add(self, vector):
+        """Adds vector to self."""
+        self.x += vector.x
+        self.y += vector.y
