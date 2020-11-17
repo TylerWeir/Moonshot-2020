@@ -65,7 +65,7 @@ while running:
                 running = False
             # Fire a bullet from the player if space is pressed
             if event.key == K_SPACE:
-                new_bullet = Bullet(player.velocity, player.rect.center)
+                new_bullet = Bullet(player.velocity.to_tuple(), player.rect.center)
                 bullets.add(new_bullet)
                 all_sprites.add(new_bullet)
         # Custom event detection to add enemy

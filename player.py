@@ -1,4 +1,4 @@
-import math
+from vector2d import Vector2D
 import pygame
 from pygame.locals import (
     K_UP,
@@ -29,27 +29,27 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.surf = playerSurf
         self.rect = self.surf.get_rect()
-        self.velocity = (0, 0)
+        self.velocity = Vector2D(0, 0)
 
     def update(self, pressed_keys):
         # Move following the velocity vector
-        self.rect.move_ip(self.velocity)
+        self.rect.move_ip(self.velocity.to_tuple())
 
         # Apply acceleration to velocity
         a = 0.1
         if pressed_keys[K_UP]:
-            self.velocity = (self.velocity[0], self.velocity[1]-a)
+            self.velocity.add(Vector2D(0, -a))
         if pressed_keys[K_DOWN]:
-            self.velocity = (self.velocity[0], self.velocity[1]+a)
+            self.velocity.add(Vector2D(0, a))
         if pressed_keys[K_LEFT]:
-            self.velocity = (self.velocity[0]-a, self.velocity[1])
+            self.velocity.add(Vector2D(-a, 0))
         if pressed_keys[K_RIGHT]:
-            self.velocity = (self.velocity[0]+a, self.velocity[1])
+            self.velocity.add(Vector2D(a, 0))
 
         # Damping the velocity
-        self.velocity = (self.velocity[0]*0.99, self.velocity[1]*0.99)
+        self.velocity.scale(0.99)
 
-        theta = self.calc_rotation(self.velocity)
+        theta = self.velocity.calc_angle()
         self.rotate(theta)
 
         # Loop the screen
@@ -73,7 +73,3 @@ class Player(pygame.sprite.Sprite):
         # get the rect of the rotated surf and set it's center to the saved
         self.rect = self.surf.get_rect()
         self.rect.center = oldCenter
-
-    def calc_rotation(self, v):
-        newtheta = math.atan2(v[1], v[0])
-        return 180-math.degrees(newtheta)
