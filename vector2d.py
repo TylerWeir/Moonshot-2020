@@ -24,7 +24,7 @@ class Vector2D():
             self.x = self.x/magnitude
             self.y = self.y/magnitude
 
-    def scale_vector(self, scale):
+    def scale(self, scale):
         """Scales the vector by the given quantity."""
         self.x *= scale
         self.y *= scale
