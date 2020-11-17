@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 import pilot
 from vector2d import Vector2D
 
@@ -56,7 +55,7 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity.add(acceleration)
         if(self.velocity.get_magnitude() > self.max_velocity):
             self.velocity.normalize_vector()
-            self.velocity.scale_vector(self.max_velocity)
+            self.velocity.scale(self.max_velocity)
 
         # Rotate to align with the new velocity
         # Maybe normalize first? I couldn't see much improvement
