@@ -6,127 +6,107 @@ from vector2d import Vector2D
 
 class Pilot():
     def __init__(self):
-        self.max_acceleration = 2
-        self.avoid_distance = 20
-        self.align_distance = 50
-        self.approach_distance = 100
+        self.max_acceleration = 0.1
+        self.sightRange = 150
 
-    def calc_avoid_acceleration(self, boids, position):
+    # TODO: Scales request by 1/d
+    def calc_avoid(self, boids, position):
         """Returns the avoid accerlation"""
-        # Tuple to accumulate the separation vectors
-        separations = (0, 0)
-        magnitude = 0
-
-        # Catch the zero case
-        if(len(boids) == 0):
-            return (0, 0)
+        avoidAccel = Vector2D(0, 0)
+        range = 50
+        weight = 0.015
 
         # Add up all the separation vectors
         for boid in boids:
-            separation = (position[0]-boid.rect.center[0],
-                          position[1]-boid.rect.center[1])
-            magnitude += self.vector_magnitude(separation)
-            separation = self.scale_vector(separation, (1/self.vector_magnitude(separation))**2)
-            separations = (separations[0] + separation[0],
-                           separations[1] + separation[1])
+            if math.dist(position, boid.rect.center) < range:
+                xdiff = position[0]-boid.rect.center[0]
+                ydiff = position[1]-boid.rect.center[1]
+                diff = Vector2D(xdiff, ydiff)
+                diff.scale(1/(0.5*math.dist(position, boid.rect.center)))
+                avoidAccel.add(diff)
 
-        magnitude = magnitude/len(boids)
-        return self.scale_vector(self.normalize_vector(separations), magnitude)
+        avoidAccel.scale(weight)
+        return avoidAccel
 
-    def calc_align_acceleration(self, boids):
+    def calc_align(self, boids, velocity):
         """Returns the acceleration vector to align velocity direction with the
         average velocity direction of nearby boids."""
-        # Catch the zero case that sometimes arises
-        if len(boids) == 0:
-            return (0, 0)
+        alignAccel = Vector2D(0, 0)
+        weight = 0.02
 
-        # Add up all the normalized velocity vectors and devide by n
-        velocityAccumulator = (0, 0)
         for boid in boids:
-            unitVelocity = self.normalize_vector(boid.velocity.to_tuple())
-            velocityAccumulator = (velocityAccumulator[0] + unitVelocity[0],
-                                   velocityAccumulator[1] + unitVelocity[1])
-        return(self.scale_vector(velocityAccumulator, 1))
+            xdiff = boid.velocity.x - velocity.x
+            ydiff = boid.velocity.y - velocity.y
+            alignAccel.add_values(xdiff, ydiff)
 
-    def calc_approach_acceleration(self, boids, position):
+        alignAccel.scale(weight)
+        return alignAccel
+
+    def calc_approach(self, boids, position):
         """Returns the approach accerlation"""
-        # Tuple to accumulate the positions
-        pos = (0, 0)
+        approachAccel = Vector2D(0, 0)
+        weight = 0.01
 
+        # Add up all the separation vectors
         for boid in boids:
-            pos = (pos[0] + boid.rect.center[0],
-                   pos[1] + boid.rect.center[1])
+            xdiff = boid.rect.center[0]-position[0]
+            ydiff = boid.rect.center[1]-position[1]
+            approachAccel.add_values(xdiff, ydiff)
 
-        avgPosition = 0
-        if(len(boids) == 0):
-            avgPosition = position
-        else:
-            avgPosition = (pos[0]/len(boids), pos[1]/len(boids))
+        # Makes accleration based on average position
+        if len(boids) > 0:
+            approachAccel.scale(1/len(boids))
 
-        # print(f"The focus bird is at position: {position}")
-        # print(f"The average position of nearby boids is: {avgPosition}")
+        approachAccel.scale(weight)
+        return approachAccel
 
-        separation_vector = (avgPosition[0] - position[0], avgPosition[1] - position[1])
-        return self.scale_vector(self.normalize_vector(separation_vector), 0.5)
-
-    def get_acceleration(self, position, boids):
+    def get_acceleration(self, position, velocity, boids):
         """Returns a single acceleration vector in response to nearby boids."""
-        # Needs to get the acceleration from each rule, then compose into
-        # a single vector based on the weights of each rule.
 
-        # Work from large range to small range to recycle the boid list
+        # Find the neighboring boids
+        neighbors = self.find_neighbors(boids, position, self.sightRange)
 
-        # Approach Response
-        nearbyBoids = self.find_nearby_boids(boids, position,
-                                             self.approach_distance)
-        approachAcceleration = self.calc_approach_acceleration(nearbyBoids, position)
-        # print(f"The approach accerleration is {approachAcceleration}")
+        # Acceleration acccumulator
+        # Add acceleration requests in order of importance
+        accelRequests = [
+            self.calc_avoid(neighbors, position),
+            self.calc_align(neighbors, velocity),
+            self.calc_approach(neighbors, position)]
 
-        # Align velocity Response
-        nearbyBoids = self.find_nearby_boids(nearbyBoids, position, self.align_distance)
-        alignAcceleration = self.calc_align_acceleration(nearbyBoids)
-        # print(f"The align accerleration is {alignAcceleration}")
+        for request in accelRequests:
+            print(str(request))
 
-        # Avoid Response
-        nearbyBoids = self.find_nearby_boids(nearbyBoids, position, self.avoid_distance)
-        avoidAcceleration = self.calc_avoid_acceleration(nearbyBoids, position)
+        print("")
 
-        # Return final condensed acceleration
-        totalAccel = (approachAcceleration[0] + alignAcceleration[0] + avoidAcceleration[0],
-                      approachAcceleration[1] + alignAcceleration[1] + avoidAcceleration[1])
-        totalAccel = self.scale_vector(self.normalize_vector(totalAccel), 0.1)
-        return Vector2D(totalAccel[0], totalAccel[1])
+        # Add up requests untill max acceleration is reached
+        acceptedRequests = Vector2D(0, 0)
+        for request in accelRequests:
+            # Add if room
+            if acceptedRequests.calc_magnitude() < self.max_acceleration:
+                acceptedRequests.add(request)
+            # Trim tail if over
+            if acceptedRequests.calc_magnitude() > self.max_acceleration:
+                excess = acceptedRequests.calc_magnitude()-self.max_acceleration
+                request.normalize()
+                request.scale(-excess)
+                acceptedRequests.add(request)
 
-    def find_nearby_boids(self, boids, position, distance):
+        print("Accepted Acceleration: " + str(acceptedRequests))
+        print(f"magnitude: {acceptedRequests.calc_magnitude()}")
+        print("")
+        return acceptedRequests
+
+    def find_neighbors(self, boids, position, distance):
         """Finds all the boids in a given list within the given distance of the
         indicated position."""
 
         # List to hold nearby boids
         nearbyBoids = []
 
-        # print("")
-        # print(f"Checking {len(boids)} for nearby boids")
-
-        # Adds a boid to the return list if it is closer than distance
+        # Keep boids within distance
         for boid in boids:
             d = math.dist(position, boid.rect.center)
             if((d < distance) and (d > 0)):
                 nearbyBoids.append(boid)
-                # print(f"{math.dist(position, boid.rect.center)} is less than {distance}.")
 
-        # print(f"Found {len(nearbyBoids)} nearby boids")
         return nearbyBoids
-
-    def normalize_vector(self, vector):
-        magnitude = math.sqrt(vector[0]*vector[0] + vector[1]*vector[1])
-
-        if magnitude == 0:
-            return vector
-        else:
-            return(vector[0]/magnitude, vector[1]/magnitude)
-
-    def scale_vector(self, vector, scale):
-        return (vector[0]*scale, vector[1]*scale)
-
-    def vector_magnitude(self, vector):
-        return math.sqrt(vector[0]*vector[0] + vector[1]*vector[1])
