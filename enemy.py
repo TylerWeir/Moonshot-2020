@@ -49,12 +49,12 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 800
 
         # Get accerlation from the pilot.
-        acceleration = self.pilot.get_acceleration(self.rect.center, enemies)
+        acceleration = self.pilot.get_acceleration(self.rect.center, self.velocity, enemies)
 
         # Apply acceleration to velocity
         self.velocity.add(acceleration)
-        if(self.velocity.get_magnitude() > self.max_velocity):
-            self.velocity.normalize_vector()
+        if(self.velocity.calc_magnitude() > self.max_velocity):
+            self.velocity.normalize()
             self.velocity.scale(self.max_velocity)
 
         # Rotate to align with the new velocity
