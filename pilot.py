@@ -6,7 +6,7 @@ from vector2d import Vector2D
 
 class Pilot():
     def __init__(self):
-        self.max_acceleration = 0.1
+        self.max_acceleration = 0.05
         self.sightRange = 150
 
     # TODO: Scales request by 1/d
@@ -33,7 +33,7 @@ class Pilot():
         """Returns the acceleration vector to align velocity direction with the
         average velocity direction of nearby boids."""
         velocities = Vector2D(0, 0)
-        weight = 1/16
+        weight = 1/32
 
         # No change if there are no other boids around.
         if not(len(boids)):
@@ -56,7 +56,7 @@ class Pilot():
     def calc_approach(self, boids, position):
         """Returns the approach accerlation"""
         approachAccel = Vector2D(0, 0)
-        weight = 1/100
+        weight = 1/150
 
         # Add up all the separation vectors
         for boid in boids:

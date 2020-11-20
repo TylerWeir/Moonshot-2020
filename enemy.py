@@ -38,6 +38,10 @@ class Enemy(pygame.sprite.Sprite):
         # Move following the velocity vector
         self.rect.move_ip(self.velocity.to_tuple())
 
+        # Scale back the velocity to normal speed
+        self.velocity.normalize()
+        self.velocity.scale(self.max_velocity)
+
         # Loop Screen
         if(self.rect.right < 0):
             self.rect.left = 800
@@ -55,8 +59,6 @@ class Enemy(pygame.sprite.Sprite):
 
         # Apply steering accerlation to velocity
         self.velocity.add(acceleration)
-        self.velocity.normalize()
-        self.velocity.scale(self.max_velocity)
 
         # Rotate to align with the new velocity
         # Maybe normalize first? I couldn't see much improvement
