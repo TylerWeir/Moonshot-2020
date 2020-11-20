@@ -17,9 +17,9 @@ class Vector2D():
         newtheta = math.atan2(self.y, self.x)
         return 180 - math.degrees(newtheta)
 
-    def normalize_vector(self):
+    def normalize(self):
         """Normalizes the vector to magnitude zero."""
-        magnitude = self.get_magnitude()
+        magnitude = self.calc_magnitude()
         if magnitude != 0:
             self.x = self.x/magnitude
             self.y = self.y/magnitude
@@ -29,7 +29,7 @@ class Vector2D():
         self.x *= scale
         self.y *= scale
 
-    def get_magnitude(self):
+    def calc_magnitude(self):
         """Returns the magnitude of the vector."""
         return math.sqrt(self.x**2 + self.y**2)
 
@@ -41,3 +41,11 @@ class Vector2D():
         """Adds vector to self."""
         self.x += vector.x
         self.y += vector.y
+
+    def add_values(self, x, y):
+        """Adds values to self."""
+        self.x += x
+        self.y += y
+
+    def __str__(self):
+        return "[" + str(self.x) + ", " + str(self.y) + "]"
