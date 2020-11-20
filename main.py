@@ -20,6 +20,7 @@ from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
     KEYDOWN,
+
     QUIT
 )
 
@@ -69,7 +70,7 @@ while running:
                 bullets.add(new_bullet)
                 all_sprites.add(new_bullet)
         # Custom event detection to add enemy
-        elif event.type == ADDENEMY and len(enemies) < 10:
+        elif event.type == ADDENEMY and len(enemies) < 20:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)

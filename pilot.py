@@ -7,14 +7,14 @@ from vector2d import Vector2D
 class Pilot():
     def __init__(self):
         self.max_acceleration = 0.1
-        self.sightRange = 150
+        self.sightRange = 200
 
     # TODO: Scales request by 1/d
     def calc_avoid(self, boids, position):
         """Returns the avoid accerlation"""
         avoidAccel = Vector2D(0, 0)
-        range = 50
-        weight = 0.015
+        range = 30
+        weight = 1/100
 
         # Add up all the separation vectors
         for boid in boids:
@@ -22,30 +22,38 @@ class Pilot():
                 xdiff = position[0]-boid.rect.center[0]
                 ydiff = position[1]-boid.rect.center[1]
                 diff = Vector2D(xdiff, ydiff)
-                diff.scale(1/(0.5*math.dist(position, boid.rect.center)))
+                diff.scale(range-diff.calc_magnitude())
                 avoidAccel.add(diff)
 
         avoidAccel.scale(weight)
         return avoidAccel
 
+    #
     def calc_align(self, boids, velocity):
         """Returns the acceleration vector to align velocity direction with the
         average velocity direction of nearby boids."""
-        alignAccel = Vector2D(0, 0)
-        weight = 0.02
+        velocities = Vector2D(0, 0)
+        weight = 1/8
 
+        # Accumulates velocities
         for boid in boids:
-            xdiff = boid.velocity.x - velocity.x
-            ydiff = boid.velocity.y - velocity.y
-            alignAccel.add_values(xdiff, ydiff)
+            velocities.add_values(boid.velocity.x, boid.velocity.y)
 
-        alignAccel.scale(weight)
-        return alignAccel
+        # Averages velocities
+        if len(boids):
+            velocities.scale(2/len(boids))
+            xdiff = velocities.x - velocity.x
+            ydiff = velocities.y - velocity.y
+            alignAccel = Vector2D(xdiff, ydiff)
+            alignAccel.scale(weight)
+            return alignAccel
+        else:
+            return Vector2D(0, 0)
 
     def calc_approach(self, boids, position):
         """Returns the approach accerlation"""
         approachAccel = Vector2D(0, 0)
-        weight = 0.01
+        weight = 1/100
 
         # Add up all the separation vectors
         for boid in boids:
@@ -73,10 +81,10 @@ class Pilot():
             self.calc_align(neighbors, velocity),
             self.calc_approach(neighbors, position)]
 
-        for request in accelRequests:
-            print(str(request))
+        # for request in accelRequests:
+        # print(str(request))
 
-        print("")
+        # print("")
 
         # Add up requests untill max acceleration is reached
         acceptedRequests = Vector2D(0, 0)
@@ -91,9 +99,9 @@ class Pilot():
                 request.scale(-excess)
                 acceptedRequests.add(request)
 
-        print("Accepted Acceleration: " + str(acceptedRequests))
-        print(f"magnitude: {acceptedRequests.calc_magnitude()}")
-        print("")
+        # print("Accepted Acceleration: " + str(acceptedRequests))
+        # print(f"magnitude: {acceptedRequests.calc_magnitude()}")
+        # print("")
         return acceptedRequests
 
     def find_neighbors(self, boids, position, distance):
