@@ -1,10 +1,15 @@
 # This class represnts a bullet shot into space.
 import pygame
-import math
+from vector2d import Vector2D
 
 # Create a surface that will represent a bullet
-bulletSurf = pygame.Surface((2, 2))
+bulletSurf = pygame.Surface((5, 2))
 bulletSurf.fill((255, 255, 255))
+
+# set a color key for blitting
+bulletSurf.set_colorkey((255, 0, 0))
+laser = pygame.Rect(0, 0, 5, 2)
+pygame.draw.rect(bulletSurf, (0, 255, 0), laser)
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -13,13 +18,15 @@ class Bullet(pygame.sprite.Sprite):
         super(Bullet, self).__init__()
 
         # Give a velocity in same direction as the ship with specified speed.
-        self.speed = 6
-        self.velocity = self.normalize_vector(velocity)
-        self.velocity = self.scale_vector(self.velocity, self.speed)
+        self.speed = 12
+        self.velocity = Vector2D(velocity[0], velocity[1])
+        self.velocity.normalize()
+        self.velocity.scale(self.speed)
 
         # Take the default surface and set to initial position.
         self.surf = bulletSurf
         self.rect = self.surf.get_rect(center=position)
+        self.rotate(self.velocity.calc_angle())
 
         # Lifespan of the bullet in frames
         self.lifespan = 120
@@ -27,7 +34,7 @@ class Bullet(pygame.sprite.Sprite):
     # Update function to move the bullet through space
     def update(self):
         # Move by the velocity
-        self.rect.move_ip(self.velocity)
+        self.rect.move_ip(self.velocity.to_tuple())
 
         # Loops the edges of the screen
         if(self.rect.right < 0):
@@ -46,20 +53,14 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.lifespan -= 1
 
-    def calc_rotation(self, v):
-        newtheta = math.atan2(v[1], v[0])
-        return 180-math.degrees(newtheta)
+    def rotate(self, angle):
+        # save the old center postion
+        oldCenter = self.rect.center
 
-    def normalize_vector(self, vector):
-        magnitude = self.vector_magnitude(vector)
+        # sets the current surface to the enemy surface rotated to the
+        # indicated angle
+        self.surf = pygame.transform.rotate(bulletSurf, angle)
 
-        if magnitude == 0:
-            return vector
-        else:
-            return(vector[0]/magnitude, vector[1]/magnitude)
-
-    def scale_vector(self, vector, scale):
-        return (vector[0]*scale, vector[1]*scale)
-
-    def vector_magnitude(self, vector):
-        return math.sqrt(vector[0]*vector[0] + vector[1]*vector[1])
+        # get the rect of the rotated surf and set it's center to the saved
+        self.rect = self.surf.get_rect()
+        self.rect.center = oldCenter
