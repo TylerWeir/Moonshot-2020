@@ -13,6 +13,7 @@
 from player import Player
 from enemy import Enemy
 from bullet import Bullet
+from vector2d import Vector2D
 
 # External imports
 import pygame
@@ -20,7 +21,6 @@ from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
     KEYDOWN,
-
     QUIT
 )
 
@@ -28,7 +28,7 @@ from pygame.locals import (
 pygame.init()
 
 # Create the screen object
-screen = pygame.display.set_mode((800, 800))
+screen = pygame.display.set_mode((1920, 1080))
 background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
 
@@ -52,6 +52,31 @@ clock = pygame.time.Clock()
 # Variable to keep the game running.
 running = True
 
+
+# Used to fire the lasers from the guns on the ship sprite
+def fireLasers():
+    x = player.rect.center[0]
+    y = player.rect.center[1]
+
+    # Get normal velocity of player
+    direction = Vector2D(-player.velocity.y, player.velocity.x)
+    direction.normalize()
+    direction.scale(25)
+    pos = direction.to_tuple()
+    pos = (pos[0] + x, pos[1] + y)
+    new_bullet = Bullet(player.velocity.to_tuple(), pos)
+    bullets.add(new_bullet)
+    all_sprites.add(new_bullet)
+
+    # Add left bullet
+    direction.scale(-1)
+    pos = direction.to_tuple()
+    pos = (pos[0] + x, pos[1] + y)
+    new_bullet = Bullet(player.velocity.to_tuple(), pos)
+    bullets.add(new_bullet)
+    all_sprites.add(new_bullet)
+
+
 # Game loop!
 while running:
     # Loops through the event queue.
@@ -66,11 +91,9 @@ while running:
                 running = False
             # Fire a bullet from the player if space is pressed
             if event.key == K_SPACE:
-                new_bullet = Bullet(player.velocity.to_tuple(), player.rect.center)
-                bullets.add(new_bullet)
-                all_sprites.add(new_bullet)
+                fireLasers()
         # Custom event detection to add enemy
-        elif event.type == ADDENEMY and len(enemies) < 20:
+        elif event.type == ADDENEMY and len(enemies) < 10:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
