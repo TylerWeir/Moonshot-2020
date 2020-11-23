@@ -14,7 +14,7 @@ class Pilot():
         """Returns the avoid accerlation"""
         avoidAccel = Vector2D(0, 0)
         range = 30
-        weight = 1/10
+        weight = 1/15
 
         # Add up all the separation vectors
         for boid in boids:
@@ -84,11 +84,6 @@ class Pilot():
             self.calc_align(neighbors, velocity),
             self.calc_approach(neighbors, position)]
 
-        # for request in accelRequests:
-        # print(str(request))
-
-        # print("")
-
         # Add up requests untill max acceleration is reached
         acceptedRequests = Vector2D(0, 0)
         for request in accelRequests:
@@ -102,9 +97,6 @@ class Pilot():
                 request.scale(-excess)
                 acceptedRequests.add(request)
 
-        # print("Accepted Acceleration: " + str(acceptedRequests))
-        # print(f"magnitude: {acceptedRequests.calc_magnitude()}")
-        # print("")
         return acceptedRequests
 
     def find_neighbors(self, boids, position, distance):
