@@ -6,7 +6,7 @@ from vector2d import Vector2D
 
 class Pilot():
     def __init__(self):
-        self.max_acceleration = 0.05
+        self.max_acceleration = 0.1
         self.sightRange = 150
 
     # TODO: Scales request by 1/d
@@ -14,7 +14,7 @@ class Pilot():
         """Returns the avoid accerlation"""
         avoidAccel = Vector2D(0, 0)
         range = 30
-        weight = 1/15
+        weight = 1/20
 
         # Add up all the separation vectors
         for boid in boids:
@@ -33,7 +33,7 @@ class Pilot():
         """Returns the acceleration vector to align velocity direction with the
         average velocity direction of nearby boids."""
         velocities = Vector2D(0, 0)
-        weight = 1/32
+        weight = 1/36
 
         # No change if there are no other boids around.
         if not(len(boids)):
@@ -56,7 +56,7 @@ class Pilot():
     def calc_approach(self, boids, position):
         """Returns the approach accerlation"""
         approachAccel = Vector2D(0, 0)
-        weight = 1/150
+        weight = 1/100
 
         # Add up all the separation vectors
         for boid in boids:
@@ -71,7 +71,16 @@ class Pilot():
         approachAccel.scale(weight)
         return approachAccel
 
-    def get_acceleration(self, position, velocity, boids):
+    def calc_player(self, position, player_pos):
+        weight = 1/100
+        """Returns the acceleration towards the player."""
+        xdiff = player_pos[0]-position[0]
+        ydiff = player_pos[1]-position[1]
+        playerAccel = Vector2D(xdiff, ydiff)
+        playerAccel.scale(weight)
+        return playerAccel
+
+    def get_acceleration(self, position, velocity, boids, player):
         """Returns a single acceleration vector in response to nearby boids."""
 
         # Find the neighboring boids
@@ -81,6 +90,7 @@ class Pilot():
         # Add acceleration requests in order of importance
         accelRequests = [
             self.calc_avoid(neighbors, position),
+            self.calc_player(position, player.rect.center),
             self.calc_align(neighbors, velocity),
             self.calc_approach(neighbors, position)]
 
@@ -92,9 +102,10 @@ class Pilot():
                 acceptedRequests.add(request)
             # Trim tail if over
             if acceptedRequests.calc_magnitude() > self.max_acceleration:
-                excess = acceptedRequests.calc_magnitude()-self.max_acceleration
+                print("clipped!")
+                tail = acceptedRequests.calc_magnitude()-self.max_acceleration
                 request.normalize()
-                request.scale(-excess)
+                request.scale(-tail)
                 acceptedRequests.add(request)
 
         return acceptedRequests

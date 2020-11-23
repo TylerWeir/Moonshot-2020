@@ -104,7 +104,7 @@ while running:
     # Updates entities in these groups, providing necessary information
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
-    enemies.update(enemies)
+    enemies.update(enemies, player)
     bullets.update()
 
     # Draws all sprites to the screen
@@ -128,7 +128,7 @@ while running:
     # Update the display to see new drawings
     pygame.display.flip()
 
-    # Ensure program maintains a rate of 30 frames per second
+    # Ensure program maintains a rate of 60 frames per second
     clock.tick(60)
 
 # Quits the program when the game loop ends.
