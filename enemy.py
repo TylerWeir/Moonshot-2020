@@ -44,13 +44,13 @@ class Enemy(pygame.sprite.Sprite):
 
         # Loop Screen
         if(self.rect.right < 0):
-            self.rect.left = 800
-        if(self.rect.left > 800):
+            self.rect.left = 1920
+        if(self.rect.left > 1920):
             self.rect.right = 0
-        if(self.rect.top > 800):
+        if(self.rect.top > 1080):
             self.rect.bottom = 0
         if(self.rect.bottom < 0):
-            self.rect.top = 800
+            self.rect.top = 1080
 
         # Get accerlation from the pilot.
         acceleration = self.pilot.get_acceleration(self.rect.center,
