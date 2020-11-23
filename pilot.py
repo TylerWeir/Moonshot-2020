@@ -102,7 +102,6 @@ class Pilot():
                 acceptedRequests.add(request)
             # Trim tail if over
             if acceptedRequests.calc_magnitude() > self.max_acceleration:
-                print("clipped!")
                 tail = acceptedRequests.calc_magnitude()-self.max_acceleration
                 request.normalize()
                 request.scale(-tail)
