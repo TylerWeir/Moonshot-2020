@@ -38,13 +38,13 @@ class Bullet(pygame.sprite.Sprite):
 
         # Loops the edges of the screen
         if(self.rect.right < 0):
-            self.rect.left = 800
-        if(self.rect.left > 800):
+            self.rect.left = 1920
+        if(self.rect.left > 1920):
             self.rect.right = 0
-        if(self.rect.top > 800):
+        if(self.rect.top > 1080):
             self.rect.bottom = 0
         if(self.rect.bottom < 0):
-            self.rect.top = 800
+            self.rect.top = 1080
 
         # Kill the bullet if the lifespan is zero, otherwise, decrement it by
         # one frame
