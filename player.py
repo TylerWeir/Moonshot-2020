@@ -1,8 +1,8 @@
 from vector2d import Vector2D
 import pygame
+import math
 from pygame.locals import (
     K_UP,
-    K_DOWN,
     K_LEFT,
     K_RIGHT,
 )
@@ -21,31 +21,31 @@ class Player(pygame.sprite.Sprite):
         self.surf = self.makeSurface()
         self.rect = self.surf.get_rect()
         self.velocity = Vector2D(0, 0)
+        self.facing = 0  # in radians
+
+    def get_direction(self):
+        return self.facing
 
     def update(self, pressed_keys):
         # Move following the velocity vector
         self.rect.move_ip(self.velocity.to_tuple())
         self.isThrust = False
         # Apply acceleration to velocity
-        a = 0.1
+        a = 0.05
         if pressed_keys[K_UP]:
             self.isThrust = True
-            self.velocity.add(Vector2D(0, -a))
-        if pressed_keys[K_DOWN]:
-            self.isThrust = True
-            self.velocity.add(Vector2D(0, a))
+            self.velocity.add(Vector2D(a*math.cos(self.facing), a*math.sin(self.facing)))
         if pressed_keys[K_LEFT]:
-            self.isThrust = True
-            self.velocity.add(Vector2D(-a, 0))
+            self.facing -= 0.1
         if pressed_keys[K_RIGHT]:
-            self.isThrust = True
-            self.velocity.add(Vector2D(a, 0))
+            self.facing += 0.1
 
-        # Damping the velocity
-        self.velocity.scale(0.99)
+        # Limit velocity
+        if self.velocity.calc_magnitude() > 5:
+            self.velocity.normalize()
+            self.velocity.scale(5)
 
-        theta = self.velocity.calc_angle()
-        self.rotate(theta)
+        self.rotate(Vector2D(math.cos(self.facing), math.sin(self.facing)).calc_angle())
 
         # Loop the screen
         if self.rect.right < 0:

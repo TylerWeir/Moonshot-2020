@@ -17,6 +17,7 @@ from vector2d import Vector2D
 
 # External imports
 import pygame
+import math
 from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
@@ -58,13 +59,15 @@ def fireLasers():
     x = player.rect.center[0]
     y = player.rect.center[1]
 
-    # Get normal velocity of player
-    direction = Vector2D(-player.velocity.y, player.velocity.x)
+    # Get normal direction of player
+    direction = Vector2D(-math.sin(player.get_direction()),
+                         math.cos(player.get_direction()))
     direction.normalize()
     direction.scale(25)
     pos = direction.to_tuple()
     pos = (pos[0] + x, pos[1] + y)
-    new_bullet = Bullet(player.velocity.to_tuple(), pos)
+    vel = (math.cos(player.get_direction()), math.sin(player.get_direction()))
+    new_bullet = Bullet(vel, pos)
     bullets.add(new_bullet)
     all_sprites.add(new_bullet)
 
@@ -72,7 +75,7 @@ def fireLasers():
     direction.scale(-1)
     pos = direction.to_tuple()
     pos = (pos[0] + x, pos[1] + y)
-    new_bullet = Bullet(player.velocity.to_tuple(), pos)
+    new_bullet = Bullet(vel, pos)
     bullets.add(new_bullet)
     all_sprites.add(new_bullet)
 
