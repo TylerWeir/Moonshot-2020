@@ -3,18 +3,11 @@ import random
 import pilot
 from vector2d import Vector2D
 
-# Create a surface that will represent the enemy
-enemySurf = pygame.Surface((10, 5))
-enemySurf.fill((255, 255, 255))
-
-# set a color key for blitting
-enemySurf.set_colorkey((255, 0, 0))
-
-# create shapes so you can tell rotation is happenning
-smaller = pygame.Rect(0, 0, 5, 5)
-
-# draw those two shapes to that surface
-pygame.draw.rect(enemySurf, (255, 75, 75), smaller)
+#   Load the sprite images for the enemies
+enemyImages = [pygame.image.load('sprites/enemy_1.png'),
+               pygame.image.load('sprites/enemy_2.png'),
+               pygame.image.load('sprites/enemy_3.png'),
+               pygame.image.load('sprites/enemy_4.png')]
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -22,14 +15,14 @@ class Enemy(pygame.sprite.Sprite):
         # initialize the super sprite class
         super(Enemy, self).__init__()
 
+        self.frames = 0
+
         # Make a pilot for acceleration control
         self.pilot = pilot.Pilot()
         # Setup the movement vectors
         self.velocity = Vector2D(random.randint(-2, 2), random.randint(-2, 2))
 
-        # Point in direction of inital velocity
-        initial_angle = self.velocity.calc_angle()
-        self.surf = pygame.transform.rotate(enemySurf, initial_angle)
+        self.surf = self.makeSurface()
         self.rect = self.surf.get_rect(center=(random.randint(0, 800),
                                                random.randint(0, 800)))
         self.max_velocity = 3
@@ -66,14 +59,29 @@ class Enemy(pygame.sprite.Sprite):
         theta = self.velocity.calc_angle()
         self.rotate(theta)
 
+        # Update the counter for the images
+        self.frames += 1
+        if ((self.frames//8) > 3):
+            self.frames = 0
+
     def rotate(self, angle):
         # save the old center postion
         oldCenter = self.rect.center
 
         # sets the current surface to the enemy surface rotated to the
         # indicated angle
-        self.surf = pygame.transform.rotate(enemySurf, angle)
+        self.surf = pygame.transform.rotate(self.makeSurface(), angle+90)
 
         # get the rect of the rotated surf and set it's center to the saved
         self.rect = self.surf.get_rect()
         self.rect.center = oldCenter
+
+    def makeSurface(self):
+        # Create a surface that will represent the enemy
+        enemySurf = pygame.Surface((10, 30))
+
+        # blit the image onto the Surface
+        enemySurf.set_colorkey((255, 0, 0))
+        enemySurf.blit(enemyImages[self.frames//8], (0, 0))
+
+        return enemySurf
