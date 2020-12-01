@@ -74,7 +74,7 @@ class Player(pygame.sprite.Sprite):
         playerSurf = pygame.Surface((64, 64))
 
         # blit the image onto the surface
-        playerSurf.set_colorkey((255, 0, 0))
+        playerSurf.set_colorkey((255, 0, 255))
         if self.isThrust:
             playerSurf.blit(shipImages[1], (0, 0))
         else:

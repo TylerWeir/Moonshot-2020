@@ -81,7 +81,7 @@ class Enemy(pygame.sprite.Sprite):
         enemySurf = pygame.Surface((10, 30))
 
         # blit the image onto the Surface
-        enemySurf.set_colorkey((255, 0, 0))
+        enemySurf.set_colorkey((255, 0, 255))
         enemySurf.blit(enemyImages[self.frames//8], (0, 0))
 
         return enemySurf
