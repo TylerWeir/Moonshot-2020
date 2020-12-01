@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
                                                random.randint(0, 800)))
         self.max_velocity = 3
 
-    def update(self, enemies, player):
+    def update(self, enemies, playerPos):
         # Move following the velocity vector
         self.rect.move_ip(self.velocity.to_tuple())
 
@@ -45,7 +45,7 @@ class Enemy(pygame.sprite.Sprite):
         acceleration = self.pilot.get_acceleration(self.rect.center,
                                                    self.velocity,
                                                    enemies,
-                                                   player)
+                                                   playerPos)
 
         # Apply steering accerlation to velocity
         self.velocity.add(acceleration)

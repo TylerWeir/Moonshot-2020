@@ -79,24 +79,6 @@ def fireLasers():
     all_sprites.add(new_bullet)
 
 
-# Paint the background
-screen.blit(background, (0, 0))
-
-# Add Title items
-titleFont = pygame.font.SysFont('hack', 144)
-title = titleFont.render('Moonshot', True, (255, 255, 255))
-title_rect = title.get_rect(center=(1920/2, 1080/4))
-screen.blit(title, title_rect)
-
-
-actionFont = pygame.font.SysFont('hack', 72)
-play = actionFont.render("Press 'enter' to play", True, (255, 255, 255))
-play_rect = play.get_rect(center=(1920/2, 1080/2))
-screen.blit(play, play_rect)
-
-# Update the display to see new drawings
-pygame.display.flip()
-
 # Menu Loop
 while running is False:
     # Loops through the event queue.
@@ -111,12 +93,38 @@ while running is False:
                 pygame.quit()
             # Start the game if enter is pressed
             if event.key == K_RETURN:
-                print("Enter was pressed")
                 running = True
+        elif event.type == ADDENEMY and len(enemies) < 50:
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            all_sprites.add(new_enemy)
+
+    # Paint the background
+    screen.blit(background, (0, 0))
+
+    enemies.update(enemies, (-1, -1))  # Ignores the player
+
+    for enemy in enemies:
+        screen.blit(enemy.surf, enemy.rect)
+
+    # Add Title items
+    titleFont = pygame.font.SysFont('hack', 144)
+    title = titleFont.render('Moonshot', True, (255, 255, 255))
+    title_rect = title.get_rect(center=(1920/2, 1080/4))
+    screen.blit(title, title_rect)
+
+    actionFont = pygame.font.SysFont('hack', 72)
+    play = actionFont.render("Press 'enter' to play", True, (255, 255, 255))
+    play_rect = play.get_rect(center=(1920/2, 1080/2))
+    screen.blit(play, play_rect)
+
+    pygame.display.flip()
 
     # Ensure program maintains a rate of 60 frames per second
     clock.tick(60)
 
+for enemy in enemies:
+    enemy.kill()
 
 # Game loop!
 while running:
@@ -145,7 +153,7 @@ while running:
     # Updates entities in these groups, providing necessary information
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
-    enemies.update(enemies, player)
+    enemies.update(enemies, player.rect.center)
     bullets.update()
 
     # Draws all sprites to the screen

@@ -13,8 +13,8 @@ class Pilot():
     def calc_avoid(self, boids, position):
         """Returns the avoid accerlation"""
         avoidAccel = Vector2D(0, 0)
-        range = 30
-        weight = 1/20
+        range = 40
+        weight = 1/15
 
         # Add up all the separation vectors
         for boid in boids:
@@ -71,16 +71,20 @@ class Pilot():
         approachAccel.scale(weight)
         return approachAccel
 
-    def calc_player(self, position, player_pos):
+    def calc_player(self, position, playerPos):
+        # Ignore (-1, -1) for menu animations
+        if(playerPos == (-1, -1)):
+            return(Vector2D(0, 0))
+
         weight = 1/100
         """Returns the acceleration towards the player."""
-        xdiff = player_pos[0]-position[0]
-        ydiff = player_pos[1]-position[1]
+        xdiff = playerPos[0]-position[0]
+        ydiff = playerPos[1]-position[1]
         playerAccel = Vector2D(xdiff, ydiff)
         playerAccel.scale(weight)
         return playerAccel
 
-    def get_acceleration(self, position, velocity, boids, player):
+    def get_acceleration(self, position, velocity, boids, playerPos):
         """Returns a single acceleration vector in response to nearby boids."""
 
         # Find the neighboring boids
@@ -90,7 +94,7 @@ class Pilot():
         # Add acceleration requests in order of importance
         accelRequests = [
             self.calc_avoid(neighbors, position),
-            self.calc_player(position, player.rect.center),
+            self.calc_player(position, playerPos),
             self.calc_align(neighbors, velocity),
             self.calc_approach(neighbors, position)]
 
