@@ -43,9 +43,7 @@ enemies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 
-# Add a new eney every 250 miliseconds with custom event detection and timer
-ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 200)
+wave = 0
 
 # Setup the clock to limit framerate
 clock = pygame.time.Clock()
@@ -70,6 +68,23 @@ def best_score_rank(points):
         with open(filename, 'w') as f:
             json.dump(scores, f)
         return(scores[0], scores.index(points)+1)
+
+
+# Spawn enemies in corners
+def spawn_enemies(wave):
+    for i in range(wave):
+        new_enemy = Enemy((0, 0))
+        enemies.add(new_enemy)
+        all_sprites.add(new_enemy)
+        new_enemy = Enemy((1920, 0))
+        enemies.add(new_enemy)
+        all_sprites.add(new_enemy)
+        new_enemy = Enemy((1920, 1080))
+        enemies.add(new_enemy)
+        all_sprites.add(new_enemy)
+        new_enemy = Enemy((0, 1080))
+        enemies.add(new_enemy)
+        all_sprites.add(new_enemy)
 
 
 # Used to fire the lasers from the guns on the ship sprite
@@ -111,6 +126,8 @@ play_rect = play.get_rect(center=(1920/2, 1080/2))
 running = True
 while running:
 
+    spawn_enemies(25)
+
     # Menu Loop
     menu = True
     while menu:
@@ -127,10 +144,6 @@ while running:
                 # Start the game if enter is pressed
                 if event.key == K_RETURN:
                     menu = False
-            elif event.type == ADDENEMY and len(enemies) < 50:
-                new_enemy = Enemy()
-                enemies.add(new_enemy)
-                all_sprites.add(new_enemy)
 
         # Paint the background
         screen.blit(background, (0, 0))
@@ -177,11 +190,10 @@ while running:
                 # Fire a bullet from the player if space is pressed
                 if event.key == K_SPACE:
                     fireLasers()
-            # Custom event detection to add enemy
-            elif event.type == ADDENEMY and len(enemies) < 20:
-                new_enemy = Enemy()
-                enemies.add(new_enemy)
-                all_sprites.add(new_enemy)
+
+        if len(enemies) == 0:
+            wave += 1
+            spawn_enemies(wave)
 
         # Paint the background
         screen.blit(background, (0, 0))
@@ -201,6 +213,7 @@ while running:
             # Make a new player when the old one dies
             player.kill()
             playing = False
+            wave = 0
 
         # Kill the enemy and the bullet if the bullet collides with an enemy
         for bullet in bullets:

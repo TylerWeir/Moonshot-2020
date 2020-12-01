@@ -11,7 +11,7 @@ enemyImages = [pygame.image.load('sprites/enemy_1.png'),
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, position):
         # initialize the super sprite class
         super(Enemy, self).__init__()
 
@@ -23,8 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity = Vector2D(random.randint(-2, 2), random.randint(-2, 2))
 
         self.surf = self.makeSurface()
-        self.rect = self.surf.get_rect(center=(random.randint(0, 800),
-                                               random.randint(0, 800)))
+        self.rect = self.surf.get_rect(center=position)
         self.max_velocity = 3
 
     def update(self, enemies, playerPos):
