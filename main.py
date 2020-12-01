@@ -21,6 +21,7 @@ import math
 from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
+    K_RETURN,
     KEYDOWN,
     QUIT
 )
@@ -49,9 +50,7 @@ pygame.time.set_timer(ADDENEMY, 200)
 
 # Setup the clock to limit framerate
 clock = pygame.time.Clock()
-
-# Variable to keep the game running.
-running = True
+running = False
 
 
 # Used to fire the lasers from the guns on the ship sprite
@@ -80,6 +79,45 @@ def fireLasers():
     all_sprites.add(new_bullet)
 
 
+# Paint the background
+screen.blit(background, (0, 0))
+
+# Add Title items
+titleFont = pygame.font.SysFont('hack', 144)
+title = titleFont.render('Moonshot', True, (255, 255, 255))
+title_rect = title.get_rect(center=(1920/2, 1080/4))
+screen.blit(title, title_rect)
+
+
+actionFont = pygame.font.SysFont('hack', 72)
+play = actionFont.render("Press 'enter' to play", True, (255, 255, 255))
+play_rect = play.get_rect(center=(1920/2, 1080/2))
+screen.blit(play, play_rect)
+
+# Update the display to see new drawings
+pygame.display.flip()
+
+# Menu Loop
+while running is False:
+    # Loops through the event queue.
+    for event in pygame.event.get():
+        # Quit if the user clicks the quit button.
+        if event.type == QUIT:
+            pygame.quit()
+        # Looks for a key pressed event.
+        elif event.type == KEYDOWN:
+            # Quit if the escape key is pressed.
+            if event.key == K_ESCAPE:
+                pygame.quit()
+            # Start the game if enter is pressed
+            if event.key == K_RETURN:
+                print("Enter was pressed")
+                running = True
+
+    # Ensure program maintains a rate of 60 frames per second
+    clock.tick(60)
+
+
 # Game loop!
 while running:
     # Loops through the event queue.
@@ -96,7 +134,7 @@ while running:
             if event.key == K_SPACE:
                 fireLasers()
         # Custom event detection to add enemy
-        elif event.type == ADDENEMY and len(enemies) < 10:
+        elif event.type == ADDENEMY and len(enemies) < 20:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)

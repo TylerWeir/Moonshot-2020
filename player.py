@@ -19,9 +19,9 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.isThrust = False
         self.surf = self.makeSurface()
-        self.rect = self.surf.get_rect()
+        self.rect = self.surf.get_rect(center=(1920/2, 1080/2))
         self.velocity = Vector2D(0, 0)
-        self.facing = 0  # in radians
+        self.facing = -3.14/2  # in radians
 
     def get_direction(self):
         return self.facing
@@ -31,14 +31,14 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(self.velocity.to_tuple())
         self.isThrust = False
         # Apply acceleration to velocity
-        a = 0.05
+        a = 0.1
         if pressed_keys[K_UP]:
             self.isThrust = True
             self.velocity.add(Vector2D(a*math.cos(self.facing), a*math.sin(self.facing)))
         if pressed_keys[K_LEFT]:
-            self.facing -= 0.1
+            self.facing -= 0.05
         if pressed_keys[K_RIGHT]:
-            self.facing += 0.1
+            self.facing += 0.05
 
         # Limit velocity
         if self.velocity.calc_magnitude() > 5:
