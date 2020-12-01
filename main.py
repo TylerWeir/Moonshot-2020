@@ -134,21 +134,29 @@ author_rect = author.get_rect(top=10, left=10)
 running = True
 while running:
 
+    menu = True
+    playing = True
+    endScreen = True
     spawn_enemies(25)
 
     # Menu Loop
-    menu = True
     while menu:
         # Loops through the event queue.
         for event in pygame.event.get():
             # Quit if the user clicks the quit button.
             if event.type == QUIT:
-                pygame.quit()
+                running = False
+                menu = False
+                playing = False
+                endScreen = False
             # Looks for a key pressed event.
             elif event.type == KEYDOWN:
                 # Quit if the escape key is pressed.
                 if event.key == K_ESCAPE:
-                    pygame.quit()
+                    running = False
+                    menu = False
+                    playing = False
+                    endScreen = False
                 # Start the game if enter is pressed
                 if event.key == K_RETURN:
                     menu = False
@@ -180,23 +188,26 @@ while running:
     multiplier = 1
     all_sprites.add(player)
 
-    scoreFont = pygame.font.SysFont('hack', 24)
+    scoreFont = pygame.font.SysFont('hack', 36)
     score = scoreFont.render("score: " + str(points), True, (173, 185, 204))
     score_rect = score.get_rect(right=1910, top=10)
 
     # Game loop!
-    playing = True
     while playing:
         # Loops through the event queue.
         for event in pygame.event.get():
             # Quit if the user clicks the quit button.
             if event.type == QUIT:
-                pygame.quit()
+                running = False
+                playing = False
+                endScreen = False
             # Looks for a key pressed event.
             elif event.type == KEYDOWN:
                 # Quit if the escape key is pressed.
                 if event.key == K_ESCAPE:
-                    pygame.quit()
+                    running = False
+                    playing = False
+                    endScreen = False
                 # Fire a bullet from the player if space is pressed
                 if event.key == K_SPACE:
                     fireLasers()
@@ -267,18 +278,19 @@ while running:
     instructions_rect = instructions.get_rect(center=(1920/2, 1080/3))
 
     # Death Screen
-    endScreen = True
     while endScreen:
         # Loops through the event queue.
         for event in pygame.event.get():
             # Quit if the user clicks the quit button.
             if event.type == QUIT:
-                pygame.quit()
+                running = False
+                endScreen = False
             # Looks for a key pressed event.
             elif event.type == KEYDOWN:
                 # Quit if the escape key is pressed.
                 if event.key == K_ESCAPE:
-                    pygame.quit()
+                    running = False
+                    endScreen = False
                 # Restart the game game if enter is pressed
                 if event.key == K_RETURN:
                     endScreen = False
