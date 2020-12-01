@@ -29,10 +29,13 @@ from pygame.locals import (
 # Initializes the pygame modules
 pygame.init()
 
+# Load in the background image
+backgroundImage = pygame.image.load('sprites/background.png')
+
 # Create the screen object
 screen = pygame.display.set_mode((1920, 1080))
 background = pygame.Surface(screen.get_size())
-background.fill((0, 0, 0))
+background.blit(backgroundImage, (0, 0))
 
 # Instantiate the player
 player = Player()
