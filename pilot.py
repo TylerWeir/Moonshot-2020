@@ -1,5 +1,5 @@
-# This module will represent the pilot controlling a ship using Craig Reynold's
-# flocking algorithim
+# This module will represent the pilot controlling an enemy ship using a
+# modified implementation of  Craig Reynold's flocking algorithim
 import math
 from vector2d import Vector2D
 
