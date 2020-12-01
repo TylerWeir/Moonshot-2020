@@ -122,6 +122,14 @@ actionFont = pygame.font.SysFont('hack', 72)
 play = actionFont.render("Press 'enter' to play", True, (173, 185, 204))
 play_rect = play.get_rect(center=(1920/2, 1080/2))
 
+instructionsFont = pygame.font.SysFont('hack', 24)
+instructions = instructionsFont.render("Spacebar: shoot   Arrowkeys: steer", True, (173, 185, 204))
+instructions_rect = instructions.get_rect(center=(1920/2, 1080*3/5))
+
+authorFont = pygame.font.SysFont('hack', 18)
+author = authorFont.render("Created by: Tyler Weir  Version: 1.0", True, (173, 185, 204))
+author_rect = author.get_rect(top=10, left=10)
+
 # God Loop
 running = True
 while running:
@@ -155,6 +163,8 @@ while running:
 
         screen.blit(title, title_rect)
         screen.blit(play, play_rect)
+        screen.blit(instructions, instructions_rect)
+        screen.blit(author, author_rect)
 
         pygame.display.flip()
 
@@ -252,6 +262,10 @@ while running:
     bestScore = bestScoreFont.render("Best: " + str(scoreAndRank[0]), True, (173, 185, 204))
     bestScore_rect = bestScore.get_rect(center=(1920/2, 1080*3/4))
 
+    instructionsFont = pygame.font.SysFont('hack', 24)
+    instructions = instructionsFont.render("Enter: play again   Esc: quit", True, (173, 185, 204))
+    instructions_rect = instructions.get_rect(center=(1920/2, 1080/3))
+
     # Death Screen
     endScreen = True
     while endScreen:
@@ -281,6 +295,7 @@ while running:
         screen.blit(death, death_rect)
         screen.blit(finalScore, finalScore_rect)
         screen.blit(bestScore, bestScore_rect)
+        screen.blit(instructions, instructions_rect)
 
         pygame.display.flip()
 
