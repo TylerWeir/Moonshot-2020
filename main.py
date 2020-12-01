@@ -1,13 +1,11 @@
-# Moonshot is a 2D space age dogfighting game. The player is tasked with
-# defending his moon base for as long as he can survive. The enemy ships come
-# in waves. Each wave contains squadrons of enemies that swoop upon the player
-# and attempt to destroy him with projectiles.
+# Moonshot is a 2D space theme survival game. The player is tasked with using
+# the ship's laser guns to destroy waves of enemies for as long as he can
+# survive.
 #
-# Created by: Tyler Weir
+# Version 1.0
 # Date: 11/9/2020
 #
-# TODO: Make vector class, add proper ordering of acceleration to pilot class
-#
+# Created by: Tyler Weir
 
 # Local imports
 from player import Player
@@ -82,6 +80,16 @@ def fireLasers():
     all_sprites.add(new_bullet)
 
 
+# Define Fonts and words for menu
+titleFont = pygame.font.SysFont('hack', 144)
+title = titleFont.render('Moonshot', True, (173, 185, 204))
+title_rect = title.get_rect(center=(1920/2, 1080/4))
+
+actionFont = pygame.font.SysFont('hack', 72)
+play = actionFont.render("Press 'enter' to play", True, (173, 185, 204))
+play_rect = play.get_rect(center=(1920/2, 1080/2))
+
+
 # Menu Loop
 while running is False:
     # Loops through the event queue.
@@ -110,15 +118,7 @@ while running is False:
     for enemy in enemies:
         screen.blit(enemy.surf, enemy.rect)
 
-    # Add Title items
-    titleFont = pygame.font.SysFont('hack', 144)
-    title = titleFont.render('Moonshot', True, (255, 255, 255))
-    title_rect = title.get_rect(center=(1920/2, 1080/4))
     screen.blit(title, title_rect)
-
-    actionFont = pygame.font.SysFont('hack', 72)
-    play = actionFont.render("Press 'enter' to play", True, (255, 255, 255))
-    play_rect = play.get_rect(center=(1920/2, 1080/2))
     screen.blit(play, play_rect)
 
     pygame.display.flip()
