@@ -28,10 +28,14 @@ from pygame.locals import (
 # Initializes the pygame modules
 pygame.init()
 
-# Load in the background image
+# Load in the background image and icon image
 backgroundImage = pygame.image.load('sprites/background.png')
+iconImage = pygame.image.load('sprites/player_ship_thrust.png')
+iconImage.set_colorkey((255, 0, 255))
 
 # Create the screen object
+pygame.display.set_caption('Moonshot')
+pygame.display.set_icon(iconImage)
 screen = pygame.display.set_mode((1920, 1080))
 background = pygame.Surface(screen.get_size())
 background.blit(backgroundImage, (0, 0))
